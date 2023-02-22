@@ -25,6 +25,10 @@
       <div *ngIf="form.controls['firstName'].errors['maxlength']">
         First Name max length is 10
       </div>
+      <!-- <div *ngIf="form.controls['firstName'].errors['isUnsafe']"> -->
+      {{ form.controls["firstName"].errors["isUnsafe"] }} this word is not a
+      safe word, please use different word
+      <!-- </div> -->
     </div>
   </div>
   <div>

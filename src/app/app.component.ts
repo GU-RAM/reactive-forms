@@ -1,5 +1,12 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 
 enum Occupation {
   Developer = 'Developer',
@@ -19,6 +26,16 @@ interface RegisterForm {
   email: FormControl<string | null>;
   occupation?: FormControl<Occupation | null>;
   gender: FormControl<Gender | null>;
+}
+
+const unsafedWords = ['cudisitva1', 'cudisitva2', 'cudisitva3'];
+
+function forbiddenWordsValidator(): ValidatorFn {
+  console.log('bla');
+  return (control: AbstractControl): ValidationErrors | null => {
+    const isUnsaferWord = unsafedWords.includes(control.value);
+    return isUnsaferWord ? { isUnsafe: control.value } : null;
+  };
 }
 
 @Component({
@@ -45,7 +62,7 @@ export class AppComponent {
       firstName: new FormControl(null, [
         Validators.required,
         Validators.minLength(2),
-        Validators.maxLength(10),
+        forbiddenWordsValidator(),
       ]),
       lastName: new FormControl('', [Validators.required]),
       hobbies: new FormControl(null),
