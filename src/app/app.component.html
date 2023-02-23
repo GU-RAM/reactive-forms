@@ -90,20 +90,39 @@
     <div>Hobbies:</div>
     <div formArrayName="hobbies">
       <!-- <textarea formControlName="hobbies"></textarea> -->
-      <select *ngFor="let hobbyControl of form.controls['hobbies']">
-        <option [value]="null" hidden>Select Hobby</option>
-        <option *ngFor="let hobby of hobbies" [value]="hobby">
-          {{ hobby }}
-        </option>
-      </select>
-      <button type="button" (click)="addHobbyControl()">Add Hobby</button>
+      <div
+        *ngFor="
+          let hobbyControl of form.controls.hobbies?.controls;
+          let i = index
+        "
+      >
+        <select [formControl]="hobbyControl">
+          <option [value]="null" hidden>Select Hobby</option>
+          <option *ngFor="let hobby of hobbies" [value]="hobby">
+            {{ hobby }}
+          </option>
+        </select>
+        <button
+          (click)="removeHobbyControl(i)"
+          [disabled]="removeButtonDisabled"
+        >
+          X
+        </button>
+      </div>
+      <button
+        type="button"
+        (click)="addHobbyControl()"
+        [disabled]="plusButtonDisabled"
+      >
+        Add Hobby
+      </button>
     </div>
   </div>
   <div>
     <div>Occupation:</div>
     <div>
       <select formControlName="occupation">
-        <option [value]="null" selected hidden>Select</option>
+        <option [value]="" selected hidden>Select</option>
         <option [value]="occupation.Developer">
           {{ occupation.Developer }}
         </option>
@@ -111,6 +130,21 @@
         <option [value]="occupation.Tester">{{ occupation.Tester }}</option>
       </select>
     </div>
+
+    <div *ngIf="form.controls['developerOf']">
+      <div>Developer Of:</div>
+      <div>
+        <input type="text" formControlName="developerOf" />
+      </div>
+    </div>
+
+    <div *ngIf="form.controls['managerOf']">
+      <div>Manager Of:</div>
+      <div>
+        <input type="text" formControlName="managerOf" />
+      </div>
+    </div>
+
     <div>Gender</div>
     <div>
       <input
