@@ -25,10 +25,10 @@
       <div *ngIf="form.controls['firstName'].errors['maxlength']">
         First Name max length is 10
       </div>
-      <!-- <div *ngIf="form.controls['firstName'].errors['isUnsafe']"> -->
-      {{ form.controls["firstName"].errors["isUnsafe"] }} this word is not a
-      safe word, please use different word
-      <!-- </div> -->
+      <div *ngIf="form.controls['firstName'].errors['isUnsafe']">
+        {{ form.controls["firstName"].errors["isUnsafe"] }} this word is not a
+        safe word, please use different word
+      </div>
     </div>
   </div>
   <div>
@@ -88,7 +88,16 @@
   </div>
   <div>
     <div>Hobbies:</div>
-    <div><textarea formControlName="hobbies"></textarea></div>
+    <div formArrayName="hobbies">
+      <!-- <textarea formControlName="hobbies"></textarea> -->
+      <select *ngFor="let hobbyControl of form.controls['hobbies']">
+        <option [value]="null" hidden>Select Hobby</option>
+        <option *ngFor="let hobby of hobbies" [value]="hobby">
+          {{ hobby }}
+        </option>
+      </select>
+      <button type="button" (click)="addHobbyControl()">Add Hobby</button>
+    </div>
   </div>
   <div>
     <div>Occupation:</div>

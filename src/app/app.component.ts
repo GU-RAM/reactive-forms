@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
 import {
   AbstractControl,
+  FormArray,
+  FormBuilder,
   FormControl,
   FormGroup,
   ValidationErrors,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { forbiddenWordsValidator } from './app.validator';
 
 enum Occupation {
   Developer = 'Developer',
@@ -21,21 +24,11 @@ enum Gender {
 interface RegisterForm {
   firstName: FormControl<string | null>;
   lastName: FormControl<string | null>;
-  hobbies: FormControl<string | null>;
+  hobbies: FormArray<FormControl<string | null>>;
   age: FormControl<number | null>;
   email: FormControl<string | null>;
   occupation?: FormControl<Occupation | null>;
   gender: FormControl<Gender | null>;
-}
-
-const unsafedWords = ['cudisitva1', 'cudisitva2', 'cudisitva3'];
-
-function forbiddenWordsValidator(): ValidatorFn {
-  console.log('bla');
-  return (control: AbstractControl): ValidationErrors | null => {
-    const isUnsaferWord = unsafedWords.includes(control.value);
-    return isUnsaferWord ? { isUnsafe: control.value } : null;
-  };
 }
 
 @Component({
@@ -52,32 +45,47 @@ export class AppComponent {
 
   handleSubmission() {
     this.isSubmitted = true;
-    console.log(this.form);
+    console.log(this.form.controls['hobbies']);
   }
 
-  constructor() {}
+  hobbies = [
+    'Hiking',
+    'Reading',
+    'Meditation',
+    'Gym',
+    'Yoga',
+    'Drawing',
+    'Singing',
+  ];
+
+  constructor(private fb: FormBuilder) {}
 
   private buildForm() {
-    return new FormGroup<RegisterForm>({
-      firstName: new FormControl(null, [
+    return this.fb.group<RegisterForm>({
+      firstName: this.fb.control('', [
         Validators.required,
         Validators.minLength(2),
         forbiddenWordsValidator(),
       ]),
-      lastName: new FormControl('', [Validators.required]),
-      hobbies: new FormControl(null),
-      age: new FormControl(null, [
+      lastName: this.fb.control('', [Validators.required]),
+      hobbies: this.fb.array([this.fb.control('')]),
+      age: this.fb.control(null, [
         Validators.required,
         Validators.min(10),
         Validators.max(80),
       ]),
-      email: new FormControl(null, [Validators.required, Validators.email]),
-      occupation: new FormControl(null),
-      gender: new FormControl(Gender.Male, [Validators.required]),
+      email: this.fb.control(null, [Validators.required, Validators.email]),
+      occupation: this.fb.control(null),
+      gender: this.fb.control(Gender.Male, [Validators.required]),
     });
+  }
+
+  addHobbyControl() {
+    console.log('adding');
   }
 
   ngOnInit() {
     this.buildForm;
+    this.form.valueChanges.subscribe((x) => console.log(x));
   }
 }
